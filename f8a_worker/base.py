@@ -9,6 +9,7 @@ from f8a_worker.utils import json_serial
 from f8a_worker.object_cache import ObjectCache
 from f8a_worker.storages import BayesianPostgres
 from f8a_worker.storages import PackagePostgres
+from f8a_worker.storages import StackPostgres
 
 
 class BaseTask(SelinonTask):
@@ -32,7 +33,7 @@ class BaseTask(SelinonTask):
     def run(self, node_args):
         # SQS guarantees 'deliver at least once', so there could be multiple
         # messages of a type, give up immediately
-        if self.storage and isinstance(self.storage, (BayesianPostgres, PackagePostgres)):
+        if self.storage and isinstance(self.storage, (BayesianPostgres, PackagePostgres, StackPostgres)):
             if self.storage.get_worker_id_count(self.task_id) > 0:
                 raise FatalTaskError("Task with ID '%s' was already processed" % self.task_id)
 
